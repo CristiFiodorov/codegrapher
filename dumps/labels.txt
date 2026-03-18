@@ -1,0 +1,150 @@
+=== C ===
+--- source ---
+void f() {
+start:
+    x = 1;
+}
+--- tree ---
+translation_unit
+  function_definition
+    type: primitive_type 'void'
+    declarator: function_declarator
+      declarator: identifier 'f'
+      parameters: parameter_list
+        ( '('
+        ) ')'
+    body: compound_statement
+      { '{'
+      labeled_statement
+        label: statement_identifier 'start'
+        : ':'
+        expression_statement
+          assignment_expression
+            left: identifier 'x'
+            operator: = '='
+            right: number_literal '1'
+          ; ';'
+      } '}'
+
+=== CPP ===
+--- source ---
+void f() {
+start:
+    x = 1;
+}
+--- tree ---
+translation_unit
+  function_definition
+    type: primitive_type 'void'
+    declarator: function_declarator
+      declarator: identifier 'f'
+      parameters: parameter_list
+        ( '('
+        ) ')'
+    body: compound_statement
+      { '{'
+      labeled_statement
+        label: statement_identifier 'start'
+        : ':'
+        expression_statement
+          assignment_expression
+            left: identifier 'x'
+            operator: = '='
+            right: number_literal '1'
+          ; ';'
+      } '}'
+
+=== JAVA ===
+--- source ---
+class Main {
+    void f() {
+        outer:
+        for (int i = 0; i < 10; i++) {
+            break outer;
+        }
+    }
+}
+--- tree ---
+program
+  class_declaration
+    class 'class'
+    name: identifier 'Main'
+    body: class_body
+      { '{'
+      method_declaration
+        type: void_type 'void'
+        name: identifier 'f'
+        parameters: formal_parameters
+          ( '('
+          ) ')'
+        body: block
+          { '{'
+          labeled_statement
+            identifier 'outer'
+            : ':'
+            for_statement
+              for 'for'
+              ( '('
+              init: local_variable_declaration
+                type: integral_type
+                  int 'int'
+                declarator: variable_declarator
+                  name: identifier 'i'
+                  = '='
+                  value: decimal_integer_literal '0'
+                ; ';'
+              condition: binary_expression
+                left: identifier 'i'
+                operator: < '<'
+                right: decimal_integer_literal '10'
+              ; ';'
+              update: update_expression
+                identifier 'i'
+                ++ '++'
+              ) ')'
+              body: block
+                { '{'
+                break_statement
+                  break 'break'
+                  identifier 'outer'
+                  ; ';'
+                } '}'
+          } '}'
+      } '}'
+
+=== CS ===
+--- source ---
+class Main {
+    void f() {
+    start:
+        x = 1;
+    }
+}
+--- tree ---
+compilation_unit
+  class_declaration
+    class 'class'
+    name: identifier 'Main'
+    body: declaration_list
+      { '{'
+      method_declaration
+        type: void_keyword 'void'
+        name: identifier 'f'
+        parameters: parameter_list
+          ( '('
+          ) ')'
+        body: block
+          { '{'
+          labeled_statement
+            identifier 'start'
+            : ':'
+            expression_statement
+              assignment_expression
+                left: identifier 'x'
+                assignment_operator
+                  = '='
+                right: integer_literal '1'
+              ; ';'
+          } '}'
+      } '}'
+

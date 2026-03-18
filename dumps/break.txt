@@ -1,0 +1,165 @@
+=== C ===
+--- source ---
+void f() {
+    while (1) {
+        break;
+    }
+}
+--- tree ---
+translation_unit
+  function_definition
+    type: primitive_type 'void'
+    declarator: function_declarator
+      declarator: identifier 'f'
+      parameters: parameter_list
+        ( '('
+        ) ')'
+    body: compound_statement
+      { '{'
+      while_statement
+        while 'while'
+        condition: parenthesized_expression
+          ( '('
+          number_literal '1'
+          ) ')'
+        body: compound_statement
+          { '{'
+          break_statement
+            break 'break'
+            ; ';'
+          } '}'
+      } '}'
+
+=== CPP ===
+--- source ---
+void f() {
+    while (true) {
+        break;
+    }
+}
+--- tree ---
+translation_unit
+  function_definition
+    type: primitive_type 'void'
+    declarator: function_declarator
+      declarator: identifier 'f'
+      parameters: parameter_list
+        ( '('
+        ) ')'
+    body: compound_statement
+      { '{'
+      while_statement
+        while 'while'
+        condition: condition_clause
+          ( '('
+          value: true 'true'
+          ) ')'
+        body: compound_statement
+          { '{'
+          break_statement
+            break 'break'
+            ; ';'
+          } '}'
+      } '}'
+
+=== PYTHON ===
+--- source ---
+def f():
+    while True:
+        break
+--- tree ---
+module
+  function_definition
+    def 'def'
+    name: identifier 'f'
+    parameters: parameters
+      ( '('
+      ) ')'
+    : ':'
+    body: block
+      while_statement
+        while 'while'
+        condition: true 'True'
+        : ':'
+        body: block
+          break_statement
+            break 'break'
+
+=== JAVA ===
+--- source ---
+class Main {
+    void f() {
+        while (true) {
+            break;
+        }
+    }
+}
+--- tree ---
+program
+  class_declaration
+    class 'class'
+    name: identifier 'Main'
+    body: class_body
+      { '{'
+      method_declaration
+        type: void_type 'void'
+        name: identifier 'f'
+        parameters: formal_parameters
+          ( '('
+          ) ')'
+        body: block
+          { '{'
+          while_statement
+            while 'while'
+            condition: parenthesized_expression
+              ( '('
+              true 'true'
+              ) ')'
+            body: block
+              { '{'
+              break_statement
+                break 'break'
+                ; ';'
+              } '}'
+          } '}'
+      } '}'
+
+=== CS ===
+--- source ---
+class Main {
+    void f() {
+        while (true) {
+            break;
+        }
+    }
+}
+--- tree ---
+compilation_unit
+  class_declaration
+    class 'class'
+    name: identifier 'Main'
+    body: declaration_list
+      { '{'
+      method_declaration
+        type: void_keyword 'void'
+        name: identifier 'f'
+        parameters: parameter_list
+          ( '('
+          ) ')'
+        body: block
+          { '{'
+          while_statement
+            while 'while'
+            ( '('
+            boolean_literal
+              true 'true'
+            ) ')'
+            block
+              { '{'
+              break_statement
+                break 'break'
+                ; ';'
+              } '}'
+          } '}'
+      } '}'
+

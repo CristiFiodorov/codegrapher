@@ -1,0 +1,166 @@
+=== CPP ===
+--- source ---
+void f() {
+    for (auto& item : vec) {
+        process(item);
+    }
+}
+--- tree ---
+translation_unit
+  function_definition
+    type: primitive_type 'void'
+    declarator: function_declarator
+      declarator: identifier 'f'
+      parameters: parameter_list
+        ( '('
+        ) ')'
+    body: compound_statement
+      { '{'
+      for_range_loop
+        for 'for'
+        ( '('
+        type: placeholder_type_specifier
+          auto 'auto'
+        declarator: reference_declarator
+          & '&'
+          identifier 'item'
+        : ':'
+        right: identifier 'vec'
+        ) ')'
+        body: compound_statement
+          { '{'
+          expression_statement
+            call_expression
+              function: identifier 'process'
+              arguments: argument_list
+                ( '('
+                identifier 'item'
+                ) ')'
+            ; ';'
+          } '}'
+      } '}'
+
+=== PYTHON ===
+--- source ---
+def f():
+    for item in data:
+        process(item)
+--- tree ---
+module
+  function_definition
+    def 'def'
+    name: identifier 'f'
+    parameters: parameters
+      ( '('
+      ) ')'
+    : ':'
+    body: block
+      for_statement
+        for 'for'
+        left: identifier 'item'
+        in 'in'
+        right: identifier 'data'
+        : ':'
+        body: block
+          expression_statement
+            call
+              function: identifier 'process'
+              arguments: argument_list
+                ( '('
+                identifier 'item'
+                ) ')'
+
+=== JAVA ===
+--- source ---
+class Main {
+    void f() {
+        for (String item : list) {
+            process(item);
+        }
+    }
+}
+--- tree ---
+program
+  class_declaration
+    class 'class'
+    name: identifier 'Main'
+    body: class_body
+      { '{'
+      method_declaration
+        type: void_type 'void'
+        name: identifier 'f'
+        parameters: formal_parameters
+          ( '('
+          ) ')'
+        body: block
+          { '{'
+          enhanced_for_statement
+            for 'for'
+            ( '('
+            type: type_identifier 'String'
+            name: identifier 'item'
+            : ':'
+            value: identifier 'list'
+            ) ')'
+            body: block
+              { '{'
+              expression_statement
+                method_invocation
+                  name: identifier 'process'
+                  arguments: argument_list
+                    ( '('
+                    identifier 'item'
+                    ) ')'
+                ; ';'
+              } '}'
+          } '}'
+      } '}'
+
+=== CS ===
+--- source ---
+class Main {
+    void f() {
+        foreach (var item in list) {
+            process(item);
+        }
+    }
+}
+--- tree ---
+compilation_unit
+  class_declaration
+    class 'class'
+    name: identifier 'Main'
+    body: declaration_list
+      { '{'
+      method_declaration
+        type: void_keyword 'void'
+        name: identifier 'f'
+        parameters: parameter_list
+          ( '('
+          ) ')'
+        body: block
+          { '{'
+          for_each_statement
+            foreach 'foreach'
+            ( '('
+            type: implicit_type
+              var 'var'
+            left: identifier 'item'
+            in 'in'
+            right: identifier 'list'
+            ) ')'
+            body: block
+              { '{'
+              expression_statement
+                invocation_expression
+                  function: identifier 'process'
+                  arguments: argument_list
+                    ( '('
+                    argument
+                      identifier 'item'
+                    ) ')'
+                ; ';'
+              } '}'
+          } '}'
+      } '}'
+

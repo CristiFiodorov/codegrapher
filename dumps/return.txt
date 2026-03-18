@@ -1,0 +1,121 @@
+=== C ===
+--- source ---
+int f() {
+    return 42;
+}
+--- tree ---
+translation_unit
+  function_definition
+    type: primitive_type 'int'
+    declarator: function_declarator
+      declarator: identifier 'f'
+      parameters: parameter_list
+        ( '('
+        ) ')'
+    body: compound_statement
+      { '{'
+      return_statement
+        return 'return'
+        number_literal '42'
+        ; ';'
+      } '}'
+
+=== CPP ===
+--- source ---
+int f() {
+    return 42;
+}
+--- tree ---
+translation_unit
+  function_definition
+    type: primitive_type 'int'
+    declarator: function_declarator
+      declarator: identifier 'f'
+      parameters: parameter_list
+        ( '('
+        ) ')'
+    body: compound_statement
+      { '{'
+      return_statement
+        return 'return'
+        number_literal '42'
+        ; ';'
+      } '}'
+
+=== PYTHON ===
+--- source ---
+def f():
+    return 42
+--- tree ---
+module
+  function_definition
+    def 'def'
+    name: identifier 'f'
+    parameters: parameters
+      ( '('
+      ) ')'
+    : ':'
+    body: block
+      return_statement
+        return 'return'
+        integer '42'
+
+=== JAVA ===
+--- source ---
+class Main {
+    int f() {
+        return 42;
+    }
+}
+--- tree ---
+program
+  class_declaration
+    class 'class'
+    name: identifier 'Main'
+    body: class_body
+      { '{'
+      method_declaration
+        type: integral_type
+          int 'int'
+        name: identifier 'f'
+        parameters: formal_parameters
+          ( '('
+          ) ')'
+        body: block
+          { '{'
+          return_statement
+            return 'return'
+            decimal_integer_literal '42'
+            ; ';'
+          } '}'
+      } '}'
+
+=== CS ===
+--- source ---
+class Main {
+    int f() {
+        return 42;
+    }
+}
+--- tree ---
+compilation_unit
+  class_declaration
+    class 'class'
+    name: identifier 'Main'
+    body: declaration_list
+      { '{'
+      method_declaration
+        type: predefined_type 'int'
+        name: identifier 'f'
+        parameters: parameter_list
+          ( '('
+          ) ')'
+        body: block
+          { '{'
+          return_statement
+            return 'return'
+            integer_literal '42'
+            ; ';'
+          } '}'
+      } '}'
+

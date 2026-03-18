@@ -1,0 +1,210 @@
+=== C ===
+--- source ---
+void f() {
+    while (x < 10) {
+        x = x + 1;
+    }
+}
+--- tree ---
+translation_unit
+  function_definition
+    type: primitive_type 'void'
+    declarator: function_declarator
+      declarator: identifier 'f'
+      parameters: parameter_list
+        ( '('
+        ) ')'
+    body: compound_statement
+      { '{'
+      while_statement
+        while 'while'
+        condition: parenthesized_expression
+          ( '('
+          binary_expression
+            left: identifier 'x'
+            operator: < '<'
+            right: number_literal '10'
+          ) ')'
+        body: compound_statement
+          { '{'
+          expression_statement
+            assignment_expression
+              left: identifier 'x'
+              operator: = '='
+              right: binary_expression
+                left: identifier 'x'
+                operator: + '+'
+                right: number_literal '1'
+            ; ';'
+          } '}'
+      } '}'
+
+=== CPP ===
+--- source ---
+void f() {
+    while (x < 10) {
+        x = x + 1;
+    }
+}
+--- tree ---
+translation_unit
+  function_definition
+    type: primitive_type 'void'
+    declarator: function_declarator
+      declarator: identifier 'f'
+      parameters: parameter_list
+        ( '('
+        ) ')'
+    body: compound_statement
+      { '{'
+      while_statement
+        while 'while'
+        condition: condition_clause
+          ( '('
+          value: binary_expression
+            left: identifier 'x'
+            operator: < '<'
+            right: number_literal '10'
+          ) ')'
+        body: compound_statement
+          { '{'
+          expression_statement
+            assignment_expression
+              left: identifier 'x'
+              operator: = '='
+              right: binary_expression
+                left: identifier 'x'
+                operator: + '+'
+                right: number_literal '1'
+            ; ';'
+          } '}'
+      } '}'
+
+=== PYTHON ===
+--- source ---
+def f():
+    while x < 10:
+        x = x + 1
+--- tree ---
+module
+  function_definition
+    def 'def'
+    name: identifier 'f'
+    parameters: parameters
+      ( '('
+      ) ')'
+    : ':'
+    body: block
+      while_statement
+        while 'while'
+        condition: comparison_operator
+          identifier 'x'
+          operators: < '<'
+          integer '10'
+        : ':'
+        body: block
+          expression_statement
+            assignment
+              left: identifier 'x'
+              = '='
+              right: binary_operator
+                left: identifier 'x'
+                operator: + '+'
+                right: integer '1'
+
+=== JAVA ===
+--- source ---
+class Main {
+    void f() {
+        while (x < 10) {
+            x = x + 1;
+        }
+    }
+}
+--- tree ---
+program
+  class_declaration
+    class 'class'
+    name: identifier 'Main'
+    body: class_body
+      { '{'
+      method_declaration
+        type: void_type 'void'
+        name: identifier 'f'
+        parameters: formal_parameters
+          ( '('
+          ) ')'
+        body: block
+          { '{'
+          while_statement
+            while 'while'
+            condition: parenthesized_expression
+              ( '('
+              binary_expression
+                left: identifier 'x'
+                operator: < '<'
+                right: decimal_integer_literal '10'
+              ) ')'
+            body: block
+              { '{'
+              expression_statement
+                assignment_expression
+                  left: identifier 'x'
+                  operator: = '='
+                  right: binary_expression
+                    left: identifier 'x'
+                    operator: + '+'
+                    right: decimal_integer_literal '1'
+                ; ';'
+              } '}'
+          } '}'
+      } '}'
+
+=== CS ===
+--- source ---
+class Main {
+    void f() {
+        while (x < 10) {
+            x = x + 1;
+        }
+    }
+}
+--- tree ---
+compilation_unit
+  class_declaration
+    class 'class'
+    name: identifier 'Main'
+    body: declaration_list
+      { '{'
+      method_declaration
+        type: void_keyword 'void'
+        name: identifier 'f'
+        parameters: parameter_list
+          ( '('
+          ) ')'
+        body: block
+          { '{'
+          while_statement
+            while 'while'
+            ( '('
+            binary_expression
+              left: identifier 'x'
+              operator: < '<'
+              right: integer_literal '10'
+            ) ')'
+            block
+              { '{'
+              expression_statement
+                assignment_expression
+                  left: identifier 'x'
+                  assignment_operator
+                    = '='
+                  right: binary_expression
+                    left: identifier 'x'
+                    operator: + '+'
+                    right: integer_literal '1'
+                ; ';'
+              } '}'
+          } '}'
+      } '}'
+

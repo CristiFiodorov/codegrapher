@@ -1,0 +1,129 @@
+=== C ===
+--- source ---
+void f() {
+    goto done;
+    x = 1;
+done:
+    y = 2;
+}
+--- tree ---
+translation_unit
+  function_definition
+    type: primitive_type 'void'
+    declarator: function_declarator
+      declarator: identifier 'f'
+      parameters: parameter_list
+        ( '('
+        ) ')'
+    body: compound_statement
+      { '{'
+      goto_statement
+        goto 'goto'
+        label: statement_identifier 'done'
+        ; ';'
+      expression_statement
+        assignment_expression
+          left: identifier 'x'
+          operator: = '='
+          right: number_literal '1'
+        ; ';'
+      labeled_statement
+        label: statement_identifier 'done'
+        : ':'
+        expression_statement
+          assignment_expression
+            left: identifier 'y'
+            operator: = '='
+            right: number_literal '2'
+          ; ';'
+      } '}'
+
+=== CPP ===
+--- source ---
+void f() {
+    goto done;
+    x = 1;
+done:
+    y = 2;
+}
+--- tree ---
+translation_unit
+  function_definition
+    type: primitive_type 'void'
+    declarator: function_declarator
+      declarator: identifier 'f'
+      parameters: parameter_list
+        ( '('
+        ) ')'
+    body: compound_statement
+      { '{'
+      goto_statement
+        goto 'goto'
+        label: statement_identifier 'done'
+        ; ';'
+      expression_statement
+        assignment_expression
+          left: identifier 'x'
+          operator: = '='
+          right: number_literal '1'
+        ; ';'
+      labeled_statement
+        label: statement_identifier 'done'
+        : ':'
+        expression_statement
+          assignment_expression
+            left: identifier 'y'
+            operator: = '='
+            right: number_literal '2'
+          ; ';'
+      } '}'
+
+=== CS ===
+--- source ---
+class Main {
+    void f() {
+        goto done;
+        x = 1;
+    done:
+        y = 2;
+    }
+}
+--- tree ---
+compilation_unit
+  class_declaration
+    class 'class'
+    name: identifier 'Main'
+    body: declaration_list
+      { '{'
+      method_declaration
+        type: void_keyword 'void'
+        name: identifier 'f'
+        parameters: parameter_list
+          ( '('
+          ) ')'
+        body: block
+          { '{'
+          goto_statement
+            goto 'goto'
+            identifier 'done'
+            ; ';'
+          expression_statement
+            assignment_expression
+              left: identifier 'x'
+              assignment_operator
+                = '='
+              right: integer_literal '1'
+            ; ';'
+          labeled_statement
+            identifier 'done'
+            : ':'
+            expression_statement
+              assignment_expression
+                left: identifier 'y'
+                assignment_operator
+                  = '='
+                right: integer_literal '2'
+              ; ';'
+          } '}'
+      } '}'
+

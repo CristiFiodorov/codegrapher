@@ -1,0 +1,381 @@
+=== C ===
+--- source ---
+void f() {
+    switch (x) {
+        case 1:
+            a = 1;
+            break;
+        case 2:
+            a = 2;
+            break;
+        default:
+            a = 0;
+            break;
+    }
+}
+--- tree ---
+translation_unit
+  function_definition
+    type: primitive_type 'void'
+    declarator: function_declarator
+      declarator: identifier 'f'
+      parameters: parameter_list
+        ( '('
+        ) ')'
+    body: compound_statement
+      { '{'
+      switch_statement
+        switch 'switch'
+        condition: parenthesized_expression
+          ( '('
+          identifier 'x'
+          ) ')'
+        body: compound_statement
+          { '{'
+          case_statement
+            case 'case'
+            value: number_literal '1'
+            : ':'
+            expression_statement
+              assignment_expression
+                left: identifier 'a'
+                operator: = '='
+                right: number_literal '1'
+              ; ';'
+            break_statement
+              break 'break'
+              ; ';'
+          case_statement
+            case 'case'
+            value: number_literal '2'
+            : ':'
+            expression_statement
+              assignment_expression
+                left: identifier 'a'
+                operator: = '='
+                right: number_literal '2'
+              ; ';'
+            break_statement
+              break 'break'
+              ; ';'
+          case_statement
+            default 'default'
+            : ':'
+            expression_statement
+              assignment_expression
+                left: identifier 'a'
+                operator: = '='
+                right: number_literal '0'
+              ; ';'
+            break_statement
+              break 'break'
+              ; ';'
+          } '}'
+      } '}'
+
+=== CPP ===
+--- source ---
+void f() {
+    switch (x) {
+        case 1:
+            a = 1;
+            break;
+        case 2:
+            a = 2;
+            break;
+        default:
+            a = 0;
+            break;
+    }
+}
+--- tree ---
+translation_unit
+  function_definition
+    type: primitive_type 'void'
+    declarator: function_declarator
+      declarator: identifier 'f'
+      parameters: parameter_list
+        ( '('
+        ) ')'
+    body: compound_statement
+      { '{'
+      switch_statement
+        switch 'switch'
+        condition: condition_clause
+          ( '('
+          value: identifier 'x'
+          ) ')'
+        body: compound_statement
+          { '{'
+          case_statement
+            case 'case'
+            value: number_literal '1'
+            : ':'
+            expression_statement
+              assignment_expression
+                left: identifier 'a'
+                operator: = '='
+                right: number_literal '1'
+              ; ';'
+            break_statement
+              break 'break'
+              ; ';'
+          case_statement
+            case 'case'
+            value: number_literal '2'
+            : ':'
+            expression_statement
+              assignment_expression
+                left: identifier 'a'
+                operator: = '='
+                right: number_literal '2'
+              ; ';'
+            break_statement
+              break 'break'
+              ; ';'
+          case_statement
+            default 'default'
+            : ':'
+            expression_statement
+              assignment_expression
+                left: identifier 'a'
+                operator: = '='
+                right: number_literal '0'
+              ; ';'
+            break_statement
+              break 'break'
+              ; ';'
+          } '}'
+      } '}'
+
+=== PYTHON ===
+--- source ---
+def f():
+    match x:
+        case 1:
+            a = 1
+        case 2:
+            a = 2
+        case _:
+            a = 0
+--- tree ---
+module
+  function_definition
+    def 'def'
+    name: identifier 'f'
+    parameters: parameters
+      ( '('
+      ) ')'
+    : ':'
+    body: block
+      match_statement
+        match 'match'
+        subject: identifier 'x'
+        : ':'
+        body: block
+          alternative: case_clause
+            case 'case'
+            case_pattern
+              integer '1'
+            : ':'
+            consequence: block
+              expression_statement
+                assignment
+                  left: identifier 'a'
+                  = '='
+                  right: integer '1'
+          alternative: case_clause
+            case 'case'
+            case_pattern
+              integer '2'
+            : ':'
+            consequence: block
+              expression_statement
+                assignment
+                  left: identifier 'a'
+                  = '='
+                  right: integer '2'
+          alternative: case_clause
+            case 'case'
+            case_pattern
+              _ '_'
+            : ':'
+            consequence: block
+              expression_statement
+                assignment
+                  left: identifier 'a'
+                  = '='
+                  right: integer '0'
+
+=== JAVA ===
+--- source ---
+class Main {
+    void f() {
+        switch (x) {
+            case 1:
+                a = 1;
+                break;
+            case 2:
+                a = 2;
+                break;
+            default:
+                a = 0;
+                break;
+        }
+    }
+}
+--- tree ---
+program
+  class_declaration
+    class 'class'
+    name: identifier 'Main'
+    body: class_body
+      { '{'
+      method_declaration
+        type: void_type 'void'
+        name: identifier 'f'
+        parameters: formal_parameters
+          ( '('
+          ) ')'
+        body: block
+          { '{'
+          switch_expression
+            switch 'switch'
+            condition: parenthesized_expression
+              ( '('
+              identifier 'x'
+              ) ')'
+            body: switch_block
+              { '{'
+              switch_block_statement_group
+                switch_label
+                  case 'case'
+                  decimal_integer_literal '1'
+                : ':'
+                expression_statement
+                  assignment_expression
+                    left: identifier 'a'
+                    operator: = '='
+                    right: decimal_integer_literal '1'
+                  ; ';'
+                break_statement
+                  break 'break'
+                  ; ';'
+              switch_block_statement_group
+                switch_label
+                  case 'case'
+                  decimal_integer_literal '2'
+                : ':'
+                expression_statement
+                  assignment_expression
+                    left: identifier 'a'
+                    operator: = '='
+                    right: decimal_integer_literal '2'
+                  ; ';'
+                break_statement
+                  break 'break'
+                  ; ';'
+              switch_block_statement_group
+                switch_label
+                  default 'default'
+                : ':'
+                expression_statement
+                  assignment_expression
+                    left: identifier 'a'
+                    operator: = '='
+                    right: decimal_integer_literal '0'
+                  ; ';'
+                break_statement
+                  break 'break'
+                  ; ';'
+              } '}'
+          } '}'
+      } '}'
+
+=== CS ===
+--- source ---
+class Main {
+    void f() {
+        switch (x) {
+            case 1:
+                a = 1;
+                break;
+            case 2:
+                a = 2;
+                break;
+            default:
+                a = 0;
+                break;
+        }
+    }
+}
+--- tree ---
+compilation_unit
+  class_declaration
+    class 'class'
+    name: identifier 'Main'
+    body: declaration_list
+      { '{'
+      method_declaration
+        type: void_keyword 'void'
+        name: identifier 'f'
+        parameters: parameter_list
+          ( '('
+          ) ')'
+        body: block
+          { '{'
+          switch_statement
+            switch 'switch'
+            ( '('
+            value: identifier 'x'
+            ) ')'
+            body: switch_body
+              { '{'
+              switch_section
+                case_switch_label
+                  case 'case'
+                  integer_literal '1'
+                  : ':'
+                expression_statement
+                  assignment_expression
+                    left: identifier 'a'
+                    assignment_operator
+                      = '='
+                    right: integer_literal '1'
+                  ; ';'
+                break_statement
+                  break 'break'
+                  ; ';'
+              switch_section
+                case_switch_label
+                  case 'case'
+                  integer_literal '2'
+                  : ':'
+                expression_statement
+                  assignment_expression
+                    left: identifier 'a'
+                    assignment_operator
+                      = '='
+                    right: integer_literal '2'
+                  ; ';'
+                break_statement
+                  break 'break'
+                  ; ';'
+              switch_section
+                default_switch_label
+                  default 'default'
+                  : ':'
+                expression_statement
+                  assignment_expression
+                    left: identifier 'a'
+                    assignment_operator
+                      = '='
+                    right: integer_literal '0'
+                  ; ';'
+                break_statement
+                  break 'break'
+                  ; ';'
+              } '}'
+          } '}'
+      } '}'
+

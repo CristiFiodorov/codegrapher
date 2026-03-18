@@ -1,0 +1,358 @@
+=== C ===
+--- source ---
+void f() {
+    if (x > 0) {
+        a = 1;
+    } else if (x == 0) {
+        a = 2;
+    } else {
+        a = 3;
+    }
+}
+--- tree ---
+translation_unit
+  function_definition
+    type: primitive_type 'void'
+    declarator: function_declarator
+      declarator: identifier 'f'
+      parameters: parameter_list
+        ( '('
+        ) ')'
+    body: compound_statement
+      { '{'
+      if_statement
+        if 'if'
+        condition: parenthesized_expression
+          ( '('
+          binary_expression
+            left: identifier 'x'
+            operator: > '>'
+            right: number_literal '0'
+          ) ')'
+        consequence: compound_statement
+          { '{'
+          expression_statement
+            assignment_expression
+              left: identifier 'a'
+              operator: = '='
+              right: number_literal '1'
+            ; ';'
+          } '}'
+        alternative: else_clause
+          else 'else'
+          if_statement
+            if 'if'
+            condition: parenthesized_expression
+              ( '('
+              binary_expression
+                left: identifier 'x'
+                operator: == '=='
+                right: number_literal '0'
+              ) ')'
+            consequence: compound_statement
+              { '{'
+              expression_statement
+                assignment_expression
+                  left: identifier 'a'
+                  operator: = '='
+                  right: number_literal '2'
+                ; ';'
+              } '}'
+            alternative: else_clause
+              else 'else'
+              compound_statement
+                { '{'
+                expression_statement
+                  assignment_expression
+                    left: identifier 'a'
+                    operator: = '='
+                    right: number_literal '3'
+                  ; ';'
+                } '}'
+      } '}'
+
+=== CPP ===
+--- source ---
+void f() {
+    if (x > 0) {
+        a = 1;
+    } else if (x == 0) {
+        a = 2;
+    } else {
+        a = 3;
+    }
+}
+--- tree ---
+translation_unit
+  function_definition
+    type: primitive_type 'void'
+    declarator: function_declarator
+      declarator: identifier 'f'
+      parameters: parameter_list
+        ( '('
+        ) ')'
+    body: compound_statement
+      { '{'
+      if_statement
+        if 'if'
+        condition: condition_clause
+          ( '('
+          value: binary_expression
+            left: identifier 'x'
+            operator: > '>'
+            right: number_literal '0'
+          ) ')'
+        consequence: compound_statement
+          { '{'
+          expression_statement
+            assignment_expression
+              left: identifier 'a'
+              operator: = '='
+              right: number_literal '1'
+            ; ';'
+          } '}'
+        alternative: else_clause
+          else 'else'
+          if_statement
+            if 'if'
+            condition: condition_clause
+              ( '('
+              value: binary_expression
+                left: identifier 'x'
+                operator: == '=='
+                right: number_literal '0'
+              ) ')'
+            consequence: compound_statement
+              { '{'
+              expression_statement
+                assignment_expression
+                  left: identifier 'a'
+                  operator: = '='
+                  right: number_literal '2'
+                ; ';'
+              } '}'
+            alternative: else_clause
+              else 'else'
+              compound_statement
+                { '{'
+                expression_statement
+                  assignment_expression
+                    left: identifier 'a'
+                    operator: = '='
+                    right: number_literal '3'
+                  ; ';'
+                } '}'
+      } '}'
+
+=== PYTHON ===
+--- source ---
+def f():
+    if x > 0:
+        a = 1
+    elif x == 0:
+        a = 2
+    else:
+        a = 3
+--- tree ---
+module
+  function_definition
+    def 'def'
+    name: identifier 'f'
+    parameters: parameters
+      ( '('
+      ) ')'
+    : ':'
+    body: block
+      if_statement
+        if 'if'
+        condition: comparison_operator
+          identifier 'x'
+          operators: > '>'
+          integer '0'
+        : ':'
+        consequence: block
+          expression_statement
+            assignment
+              left: identifier 'a'
+              = '='
+              right: integer '1'
+        alternative: elif_clause
+          elif 'elif'
+          condition: comparison_operator
+            identifier 'x'
+            operators: == '=='
+            integer '0'
+          : ':'
+          consequence: block
+            expression_statement
+              assignment
+                left: identifier 'a'
+                = '='
+                right: integer '2'
+        alternative: else_clause
+          else 'else'
+          : ':'
+          body: block
+            expression_statement
+              assignment
+                left: identifier 'a'
+                = '='
+                right: integer '3'
+
+=== JAVA ===
+--- source ---
+class Main {
+    void f() {
+        if (x > 0) {
+            a = 1;
+        } else if (x == 0) {
+            a = 2;
+        } else {
+            a = 3;
+        }
+    }
+}
+--- tree ---
+program
+  class_declaration
+    class 'class'
+    name: identifier 'Main'
+    body: class_body
+      { '{'
+      method_declaration
+        type: void_type 'void'
+        name: identifier 'f'
+        parameters: formal_parameters
+          ( '('
+          ) ')'
+        body: block
+          { '{'
+          if_statement
+            if 'if'
+            condition: parenthesized_expression
+              ( '('
+              binary_expression
+                left: identifier 'x'
+                operator: > '>'
+                right: decimal_integer_literal '0'
+              ) ')'
+            consequence: block
+              { '{'
+              expression_statement
+                assignment_expression
+                  left: identifier 'a'
+                  operator: = '='
+                  right: decimal_integer_literal '1'
+                ; ';'
+              } '}'
+            else 'else'
+            alternative: if_statement
+              if 'if'
+              condition: parenthesized_expression
+                ( '('
+                binary_expression
+                  left: identifier 'x'
+                  operator: == '=='
+                  right: decimal_integer_literal '0'
+                ) ')'
+              consequence: block
+                { '{'
+                expression_statement
+                  assignment_expression
+                    left: identifier 'a'
+                    operator: = '='
+                    right: decimal_integer_literal '2'
+                  ; ';'
+                } '}'
+              else 'else'
+              alternative: block
+                { '{'
+                expression_statement
+                  assignment_expression
+                    left: identifier 'a'
+                    operator: = '='
+                    right: decimal_integer_literal '3'
+                  ; ';'
+                } '}'
+          } '}'
+      } '}'
+
+=== CS ===
+--- source ---
+class Main {
+    void f() {
+        if (x > 0) {
+            a = 1;
+        } else if (x == 0) {
+            a = 2;
+        } else {
+            a = 3;
+        }
+    }
+}
+--- tree ---
+compilation_unit
+  class_declaration
+    class 'class'
+    name: identifier 'Main'
+    body: declaration_list
+      { '{'
+      method_declaration
+        type: void_keyword 'void'
+        name: identifier 'f'
+        parameters: parameter_list
+          ( '('
+          ) ')'
+        body: block
+          { '{'
+          if_statement
+            if 'if'
+            ( '('
+            condition: binary_expression
+              left: identifier 'x'
+              operator: > '>'
+              right: integer_literal '0'
+            ) ')'
+            consequence: block
+              { '{'
+              expression_statement
+                assignment_expression
+                  left: identifier 'a'
+                  assignment_operator
+                    = '='
+                  right: integer_literal '1'
+                ; ';'
+              } '}'
+            else 'else'
+            alternative: if_statement
+              if 'if'
+              ( '('
+              condition: binary_expression
+                left: identifier 'x'
+                operator: == '=='
+                right: integer_literal '0'
+              ) ')'
+              consequence: block
+                { '{'
+                expression_statement
+                  assignment_expression
+                    left: identifier 'a'
+                    assignment_operator
+                      = '='
+                    right: integer_literal '2'
+                  ; ';'
+                } '}'
+              else 'else'
+              alternative: block
+                { '{'
+                expression_statement
+                  assignment_expression
+                    left: identifier 'a'
+                    assignment_operator
+                      = '='
+                    right: integer_literal '3'
+                  ; ';'
+                } '}'
+          } '}'
+      } '}'
+

@@ -1,0 +1,186 @@
+=== C ===
+--- source ---
+void f() {
+    do {
+        x = x + 1;
+    } while (x < 10);
+}
+--- tree ---
+translation_unit
+  function_definition
+    type: primitive_type 'void'
+    declarator: function_declarator
+      declarator: identifier 'f'
+      parameters: parameter_list
+        ( '('
+        ) ')'
+    body: compound_statement
+      { '{'
+      do_statement
+        do 'do'
+        body: compound_statement
+          { '{'
+          expression_statement
+            assignment_expression
+              left: identifier 'x'
+              operator: = '='
+              right: binary_expression
+                left: identifier 'x'
+                operator: + '+'
+                right: number_literal '1'
+            ; ';'
+          } '}'
+        while 'while'
+        condition: parenthesized_expression
+          ( '('
+          binary_expression
+            left: identifier 'x'
+            operator: < '<'
+            right: number_literal '10'
+          ) ')'
+        ; ';'
+      } '}'
+
+=== CPP ===
+--- source ---
+void f() {
+    do {
+        x = x + 1;
+    } while (x < 10);
+}
+--- tree ---
+translation_unit
+  function_definition
+    type: primitive_type 'void'
+    declarator: function_declarator
+      declarator: identifier 'f'
+      parameters: parameter_list
+        ( '('
+        ) ')'
+    body: compound_statement
+      { '{'
+      do_statement
+        do 'do'
+        body: compound_statement
+          { '{'
+          expression_statement
+            assignment_expression
+              left: identifier 'x'
+              operator: = '='
+              right: binary_expression
+                left: identifier 'x'
+                operator: + '+'
+                right: number_literal '1'
+            ; ';'
+          } '}'
+        while 'while'
+        condition: parenthesized_expression
+          ( '('
+          binary_expression
+            left: identifier 'x'
+            operator: < '<'
+            right: number_literal '10'
+          ) ')'
+        ; ';'
+      } '}'
+
+=== JAVA ===
+--- source ---
+class Main {
+    void f() {
+        do {
+            x = x + 1;
+        } while (x < 10);
+    }
+}
+--- tree ---
+program
+  class_declaration
+    class 'class'
+    name: identifier 'Main'
+    body: class_body
+      { '{'
+      method_declaration
+        type: void_type 'void'
+        name: identifier 'f'
+        parameters: formal_parameters
+          ( '('
+          ) ')'
+        body: block
+          { '{'
+          do_statement
+            do 'do'
+            body: block
+              { '{'
+              expression_statement
+                assignment_expression
+                  left: identifier 'x'
+                  operator: = '='
+                  right: binary_expression
+                    left: identifier 'x'
+                    operator: + '+'
+                    right: decimal_integer_literal '1'
+                ; ';'
+              } '}'
+            while 'while'
+            condition: parenthesized_expression
+              ( '('
+              binary_expression
+                left: identifier 'x'
+                operator: < '<'
+                right: decimal_integer_literal '10'
+              ) ')'
+            ; ';'
+          } '}'
+      } '}'
+
+=== CS ===
+--- source ---
+class Main {
+    void f() {
+        do {
+            x = x + 1;
+        } while (x < 10);
+    }
+}
+--- tree ---
+compilation_unit
+  class_declaration
+    class 'class'
+    name: identifier 'Main'
+    body: declaration_list
+      { '{'
+      method_declaration
+        type: void_keyword 'void'
+        name: identifier 'f'
+        parameters: parameter_list
+          ( '('
+          ) ')'
+        body: block
+          { '{'
+          do_statement
+            do 'do'
+            block
+              { '{'
+              expression_statement
+                assignment_expression
+                  left: identifier 'x'
+                  assignment_operator
+                    = '='
+                  right: binary_expression
+                    left: identifier 'x'
+                    operator: + '+'
+                    right: integer_literal '1'
+                ; ';'
+              } '}'
+            while 'while'
+            ( '('
+            binary_expression
+              left: identifier 'x'
+              operator: < '<'
+              right: integer_literal '10'
+            ) ')'
+            ; ';'
+          } '}'
+      } '}'
+

@@ -1,0 +1,121 @@
+=== CPP ===
+--- source ---
+void f() {
+    throw 42;
+}
+--- tree ---
+translation_unit
+  function_definition
+    type: primitive_type 'void'
+    declarator: function_declarator
+      declarator: identifier 'f'
+      parameters: parameter_list
+        ( '('
+        ) ')'
+    body: compound_statement
+      { '{'
+      throw_statement
+        throw 'throw'
+        number_literal '42'
+        ; ';'
+      } '}'
+
+=== PYTHON ===
+--- source ---
+def f():
+    raise ValueError("error")
+--- tree ---
+module
+  function_definition
+    def 'def'
+    name: identifier 'f'
+    parameters: parameters
+      ( '('
+      ) ')'
+    : ':'
+    body: block
+      raise_statement
+        raise 'raise'
+        call
+          function: identifier 'ValueError'
+          arguments: argument_list
+            ( '('
+            string
+              string_start '"'
+              string_content 'error'
+              string_end '"'
+            ) ')'
+
+=== JAVA ===
+--- source ---
+class Main {
+    void f() {
+        throw new RuntimeException("error");
+    }
+}
+--- tree ---
+program
+  class_declaration
+    class 'class'
+    name: identifier 'Main'
+    body: class_body
+      { '{'
+      method_declaration
+        type: void_type 'void'
+        name: identifier 'f'
+        parameters: formal_parameters
+          ( '('
+          ) ')'
+        body: block
+          { '{'
+          throw_statement
+            throw 'throw'
+            object_creation_expression
+              new 'new'
+              type: type_identifier 'RuntimeException'
+              arguments: argument_list
+                ( '('
+                string_literal '"error"'
+                ) ')'
+            ; ';'
+          } '}'
+      } '}'
+
+=== CS ===
+--- source ---
+class Main {
+    void f() {
+        throw new Exception("error");
+    }
+}
+--- tree ---
+compilation_unit
+  class_declaration
+    class 'class'
+    name: identifier 'Main'
+    body: declaration_list
+      { '{'
+      method_declaration
+        type: void_keyword 'void'
+        name: identifier 'f'
+        parameters: parameter_list
+          ( '('
+          ) ')'
+        body: block
+          { '{'
+          throw_statement
+            throw 'throw'
+            object_creation_expression
+              new 'new'
+              type: identifier 'Exception'
+              arguments: argument_list
+                ( '('
+                argument
+                  string_literal
+                    " '"'
+                    " '"'
+                ) ')'
+            ; ';'
+          } '}'
+      } '}'
+

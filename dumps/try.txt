@@ -1,0 +1,242 @@
+=== CPP ===
+--- source ---
+void f() {
+    try {
+        x = 1;
+    } catch (int e) {
+        x = 0;
+    }
+}
+--- tree ---
+translation_unit
+  function_definition
+    type: primitive_type 'void'
+    declarator: function_declarator
+      declarator: identifier 'f'
+      parameters: parameter_list
+        ( '('
+        ) ')'
+    body: compound_statement
+      { '{'
+      try_statement
+        try 'try'
+        body: compound_statement
+          { '{'
+          expression_statement
+            assignment_expression
+              left: identifier 'x'
+              operator: = '='
+              right: number_literal '1'
+            ; ';'
+          } '}'
+        catch_clause
+          catch 'catch'
+          parameters: parameter_list
+            ( '('
+            parameter_declaration
+              type: primitive_type 'int'
+              declarator: identifier 'e'
+            ) ')'
+          body: compound_statement
+            { '{'
+            expression_statement
+              assignment_expression
+                left: identifier 'x'
+                operator: = '='
+                right: number_literal '0'
+              ; ';'
+            } '}'
+      } '}'
+
+=== PYTHON ===
+--- source ---
+def f():
+    try:
+        x = 1
+    except ValueError:
+        x = 0
+    finally:
+        cleanup()
+--- tree ---
+module
+  function_definition
+    def 'def'
+    name: identifier 'f'
+    parameters: parameters
+      ( '('
+      ) ')'
+    : ':'
+    body: block
+      try_statement
+        try 'try'
+        : ':'
+        body: block
+          expression_statement
+            assignment
+              left: identifier 'x'
+              = '='
+              right: integer '1'
+        except_clause
+          except 'except'
+          identifier 'ValueError'
+          : ':'
+          block
+            expression_statement
+              assignment
+                left: identifier 'x'
+                = '='
+                right: integer '0'
+        finally_clause
+          finally 'finally'
+          : ':'
+          block
+            expression_statement
+              call
+                function: identifier 'cleanup'
+                arguments: argument_list
+                  ( '('
+                  ) ')'
+
+=== JAVA ===
+--- source ---
+class Main {
+    void f() {
+        try {
+            x = 1;
+        } catch (Exception e) {
+            x = 0;
+        } finally {
+            cleanup();
+        }
+    }
+}
+--- tree ---
+program
+  class_declaration
+    class 'class'
+    name: identifier 'Main'
+    body: class_body
+      { '{'
+      method_declaration
+        type: void_type 'void'
+        name: identifier 'f'
+        parameters: formal_parameters
+          ( '('
+          ) ')'
+        body: block
+          { '{'
+          try_statement
+            try 'try'
+            body: block
+              { '{'
+              expression_statement
+                assignment_expression
+                  left: identifier 'x'
+                  operator: = '='
+                  right: decimal_integer_literal '1'
+                ; ';'
+              } '}'
+            catch_clause
+              catch 'catch'
+              ( '('
+              catch_formal_parameter
+                catch_type
+                  type_identifier 'Exception'
+                name: identifier 'e'
+              ) ')'
+              body: block
+                { '{'
+                expression_statement
+                  assignment_expression
+                    left: identifier 'x'
+                    operator: = '='
+                    right: decimal_integer_literal '0'
+                  ; ';'
+                } '}'
+            finally_clause
+              finally 'finally'
+              block
+                { '{'
+                expression_statement
+                  method_invocation
+                    name: identifier 'cleanup'
+                    arguments: argument_list
+                      ( '('
+                      ) ')'
+                  ; ';'
+                } '}'
+          } '}'
+      } '}'
+
+=== CS ===
+--- source ---
+class Main {
+    void f() {
+        try {
+            x = 1;
+        } catch (Exception e) {
+            x = 0;
+        } finally {
+            cleanup();
+        }
+    }
+}
+--- tree ---
+compilation_unit
+  class_declaration
+    class 'class'
+    name: identifier 'Main'
+    body: declaration_list
+      { '{'
+      method_declaration
+        type: void_keyword 'void'
+        name: identifier 'f'
+        parameters: parameter_list
+          ( '('
+          ) ')'
+        body: block
+          { '{'
+          try_statement
+            try 'try'
+            body: block
+              { '{'
+              expression_statement
+                assignment_expression
+                  left: identifier 'x'
+                  assignment_operator
+                    = '='
+                  right: integer_literal '1'
+                ; ';'
+              } '}'
+            catch_clause
+              catch 'catch'
+              catch_declaration
+                ( '('
+                type: identifier 'Exception'
+                name: identifier 'e'
+                ) ')'
+              body: block
+                { '{'
+                expression_statement
+                  assignment_expression
+                    left: identifier 'x'
+                    assignment_operator
+                      = '='
+                    right: integer_literal '0'
+                  ; ';'
+                } '}'
+            finally_clause
+              finally 'finally'
+              block
+                { '{'
+                expression_statement
+                  invocation_expression
+                    function: identifier 'cleanup'
+                    arguments: argument_list
+                      ( '('
+                      ) ')'
+                  ; ';'
+                } '}'
+          } '}'
+      } '}'
+
