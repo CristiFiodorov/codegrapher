@@ -18,6 +18,12 @@ class BaseDriver(ABC):
         nid = self._counter
         self._counter += 1
         return nid
+    
+    def _sanitize_label(self, text: str, max_len: int = 80):
+        text = text.replace('"', "'")
+        text = text.replace("\n", " ").replace("\r", " ")
+        text = text.replace("\\", "/")
+        return text[:max_len]
 
     def parse(self, source: str, preprocess: bool = True):
         self._graph = nx.DiGraph()

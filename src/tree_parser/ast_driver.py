@@ -1,0 +1,36 @@
+from .base_driver import BaseDriver
+
+
+class ASTDriver(BaseDriver):
+    def __init__(self, language, lang_name: str):
+        super().__init__(language, lang_name)
+
+    def _build_graph(self, tree_root):
+        self._visit(tree_root, parent_id=None)
+
+    def _visit(self, ts_node, parent_id):
+        if not ts_node.is_named:
+            return
+
+        nid = self._next_id()
+        named_children = [c for c in ts_node.children if c.is_named]
+
+        if len(named_children) == 0:
+            raw = ts_node.text.decode("utf-8", errors="replace")
+            label = self._sanitize_label(raw)
+        else:
+            label = ts_node.type
+
+        self._graph.add_node(
+            nid,
+            type=ts_node.type,
+            label=label,
+            start="{0}_{1}".format(*ts_node.start_point),
+            end="{0}_{1}".format(*ts_node.end_point)
+        )
+
+        if parent_id is not None:
+            self._graph.add_edge(parent_id, nid, edge_type="ast_child", label="")
+
+        for child in ts_node.children:
+            self._visit(child, parent_id=nid)
