@@ -144,6 +144,7 @@ class DFGDriver(BaseDriver):
             temp, states = self._extract_dfg(rnode, states)
             DFG += temp
 
+        is_aug = self._is_augmented_assignment(node)
         for left_node, right_node in zip(left_nodes, right_nodes):
             left_indexs = self._tree_to_variable_index(left_node)
             right_indexs = self._tree_to_variable_index(right_node)
@@ -151,7 +152,12 @@ class DFGDriver(BaseDriver):
                 idx1, code1 = self._index_to_code[index1]
                 dep_names = [self._index_to_code[x][1] for x in right_indexs]
                 dep_idxs  = [self._index_to_code[x][0] for x in right_indexs]
-
+                if is_aug and code1 in states:
+                    for prev_idx in states[code1]:
+                        if prev_idx not in dep_idxs:
+                            dep_idxs.append(prev_idx)
+                            dep_names.append(code1)
+                    dep_idxs = sorted(dep_idxs)
                 DFG.append((code1, idx1, "computedFrom", dep_names, dep_idxs))
                 states[code1] = [idx1]
 
@@ -305,6 +311,16 @@ class DFGDriver(BaseDriver):
                 return [left], [right]
 
         return [left], [right]
+
+    def _is_augmented_assignment(self, node):
+        aug_types = maps.AUGMENTED_ASSIGNMENT_TYPES.get(self._lang_name, frozenset())
+
+        if node.type in aug_types:
+            return True
+        
+        # C-style languages: assignment_expression whose operator child is not plain "="
+        op = node.child_by_field_name("operator")
+        return op is not None and op.type != "="
 
     def _get_foreach_parts(self, node):
         # Java enhanced_for_statement: name, value, body

@@ -32,6 +32,14 @@ ASSIGNMENT_TYPES = {
     "cs":     frozenset({"assignment_expression"}),
 }
 
+AUGMENTED_ASSIGNMENT_TYPES = {
+    "c":      frozenset(),
+    "cpp":    frozenset(),
+    "python": frozenset({"augmented_assignment"}),
+    "java":   frozenset(),
+    "cs":     frozenset(),
+}
+
 INCREMENT_TYPES = {
     "c":      frozenset({"update_expression"}),
     "cpp":    frozenset({"update_expression"}),
