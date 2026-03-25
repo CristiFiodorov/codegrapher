@@ -3,16 +3,16 @@ import sys
 
 from utils.language import get_language_map
 from utils.postprocessor import write_networkx_to_json, write_to_dot
-from tree_parser import ASTDriver
+from tree_parser import ASTDriver, DFGDriver
 
 
-DRIVER_MAP = {"ast": ASTDriver}
+DRIVER_MAP = {"ast": ASTDriver, "dfg": DFGDriver}
 
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="codegrapher",
-        description="Parse source code into AST graphs"
+        description="Parse source code into AST or DFG graphs"
     )
     p.add_argument(
         "source_file"
@@ -26,7 +26,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument(
         "--mode",
         required=True,
-        choices=["ast"],
+        choices=DRIVER_MAP.keys(),
         help="Graph type to generate"
     )
     p.add_argument(

@@ -33,6 +33,7 @@ class BaseDriver(ABC):
             source = remove_comments(self._lang_name, source)
             source = remove_empty_lines(source)
 
+        self._source = source
         tree = self._parser.parse(bytes(source, "utf-8"))
         self._build_graph(tree.root_node)
 
