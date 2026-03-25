@@ -80,7 +80,9 @@ class DFGDriver(BaseDriver):
         if node.type in maps.FOREACH_TYPES.get(lang, frozenset()):
             return self._handle_foreach(node, states)
 
-        if node.type in maps.WHILE_TYPES.get(lang, frozenset()):
+        while_types = maps.WHILE_TYPES.get(lang, frozenset())
+        do_while_types = maps.DO_WHILE_TYPES.get(lang, frozenset())
+        if node.type in while_types or node.type in do_while_types:
             return self._handle_while(node, states)
 
         do_first_types = maps.DO_FIRST_TYPES.get(lang, frozenset())

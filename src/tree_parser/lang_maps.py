@@ -79,3 +79,11 @@ WHILE_TYPES = {
     "java":   frozenset({"while_statement"}),
     "cs":     frozenset({"while_statement"}),
 }
+
+DO_WHILE_TYPES = {
+    "c":      frozenset({"do_statement"}),
+    "cpp":    frozenset({"do_statement"}),
+    "python": frozenset(),
+    "java":   frozenset({"do_statement"}),
+    "cs":     frozenset({"do_statement"}),
+}
