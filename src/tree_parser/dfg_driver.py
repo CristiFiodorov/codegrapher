@@ -85,6 +85,9 @@ class DFGDriver(BaseDriver):
         if node.type in while_types or node.type in do_while_types:
             return self._handle_while(node, states)
 
+        if node.type in maps.SWITCH_TYPES.get(lang, frozenset()):
+            return self._handle_switch(node, states)
+
         do_first_types = maps.DO_FIRST_TYPES.get(lang, frozenset())
         return self._handle_default(node, states, do_first_types)
 
@@ -257,7 +260,47 @@ class DFGDriver(BaseDriver):
                 temp, states = self._extract_dfg(child, states)
                 DFG += temp
         return sorted(self._dedup_dfg(DFG), key=lambda x: x[1]), states
-    
+
+    def _handle_switch(self, node, states):
+        lang = self._lang_name
+        case_types = maps.CASE_CLAUSE_TYPES.get(lang, frozenset())
+        do_first_types = maps.DO_FIRST_TYPES.get(lang, frozenset())
+
+        body = node.child_by_field_name("body")
+
+        if not body:
+            return [], states
+
+        DFG = []
+        post_subject_states = states.copy()
+        for child in node.children:
+            if child != body and child.type not in case_types:
+                temp, post_subject_states = self._extract_dfg(child, post_subject_states)
+                DFG += temp
+
+        case_clauses = [child for child in body.children if child.type in case_types]
+
+        if not case_clauses:
+            return self._handle_default(body, states, do_first_types)
+
+        branch_states = [states.copy()]
+        for clause in case_clauses:
+            temp, clause_states = self._extract_dfg(clause, post_subject_states.copy())
+            DFG += temp
+            branch_states.append(clause_states)
+
+        new_states: dict = {}
+        for dic in branch_states:
+            for key in dic:
+                if key not in new_states:
+                    new_states[key] = dic[key].copy()
+                else:
+                    new_states[key] += dic[key]
+        for key in new_states:
+            new_states[key] = sorted(set(new_states[key]))
+
+        return sorted(DFG, key=lambda x: x[1]), new_states
+
     def _handle_default(self, node, states, do_first_types):
         DFG = []
         for child in node.children:

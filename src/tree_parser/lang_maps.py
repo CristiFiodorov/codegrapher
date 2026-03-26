@@ -95,3 +95,19 @@ DO_WHILE_TYPES = {
     "java":   frozenset({"do_statement"}),
     "cs":     frozenset({"do_statement"}),
 }
+
+SWITCH_TYPES = {
+    "c":      frozenset({"switch_statement"}),
+    "cpp":    frozenset({"switch_statement"}),
+    "python": frozenset({"match_statement"}),
+    "java":   frozenset({"switch_expression", "switch_statement"}),
+    "cs":     frozenset({"switch_statement"}),
+}
+
+CASE_CLAUSE_TYPES = {
+    "c":      frozenset({"case_statement"}),
+    "cpp":    frozenset({"case_statement"}),
+    "python": frozenset({"case_clause"}),
+    "java":   frozenset({"switch_block_statement_group"}),
+    "cs":     frozenset({"switch_section"}),
+}
