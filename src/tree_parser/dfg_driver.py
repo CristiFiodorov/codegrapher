@@ -87,6 +87,12 @@ class DFGDriver(BaseDriver):
 
         if node.type in maps.SWITCH_TYPES.get(lang, frozenset()):
             return self._handle_switch(node, states)
+        
+        if node.type in maps.FUNCTION_TYPES.get(lang, frozenset()):
+            return self._handle_function(node, states)
+
+        if node.type in maps.CALL_EXPRESSION_TYPES.get(lang, frozenset()):
+            return self._handle_call(node, states)
 
         do_first_types = maps.DO_FIRST_TYPES.get(lang, frozenset())
         return self._handle_default(node, states, do_first_types)
@@ -300,6 +306,40 @@ class DFGDriver(BaseDriver):
             new_states[key] = sorted(set(new_states[key]))
 
         return sorted(DFG, key=lambda x: x[1]), new_states
+    
+    def _handle_function(self, node, states):
+        param_types = maps.FUNCTION_PARAMETER_TYPES.get(self._lang_name, frozenset())
+
+        local_states = states.copy()
+        param_list = node.child_by_field_name("parameters")
+        if param_list is None:
+            # C/C++
+            decl = node.child_by_field_name("declarator")
+            if decl is not None:
+                param_list = decl.child_by_field_name("parameters")
+
+        if param_list is not None:
+            for param in param_list.children:
+                if param.type in param_types:
+                    for pos in self._tree_to_variable_index(param):
+                        idx, code = self._index_to_code[pos]
+                        local_states[code] = [idx]
+
+        DFG = []
+        body = node.child_by_field_name("body")
+        if body is not None:
+            temp, local_states = self._extract_dfg(body, local_states)
+            DFG += temp
+
+        return sorted(DFG, key=lambda x: x[1]), states
+    
+    def _handle_call(self, node, states):
+        DFG = []
+        args = node.child_by_field_name("arguments")
+        if args is not None:
+            temp, states = self._extract_dfg(args, states)
+            DFG += temp
+        return sorted(DFG, key=lambda x: x[1]), states
 
     def _handle_default(self, node, states, do_first_types):
         DFG = []

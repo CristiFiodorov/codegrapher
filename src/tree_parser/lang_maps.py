@@ -111,3 +111,29 @@ CASE_CLAUSE_TYPES = {
     "java":   frozenset({"switch_block_statement_group"}),
     "cs":     frozenset({"switch_section"}),
 }
+
+FUNCTION_TYPES = {
+    "c":      frozenset({"function_definition"}),
+    "cpp":    frozenset({"function_definition"}),
+    "python": frozenset({"function_definition"}),
+    "java":   frozenset({"method_declaration", "constructor_declaration"}),
+    "cs":     frozenset({"method_declaration", "constructor_declaration"}),
+}
+
+CALL_EXPRESSION_TYPES = {
+    "c":      frozenset({"call_expression"}),
+    "cpp":    frozenset({"call_expression"}),
+    "python": frozenset({"call"}),
+    "java":   frozenset({"method_invocation"}),
+    "cs":     frozenset({"invocation_expression"}),
+}
+
+FUNCTION_PARAMETER_TYPES = {
+    "c":      frozenset({"parameter_declaration"}),
+    "cpp":    frozenset({"parameter_declaration"}),
+    "python": frozenset({"identifier", "typed_parameter", "default_parameter",
+                         "list_splat_pattern", "dictionary_splat_pattern"}),
+    "java":   frozenset({"formal_parameter", "spread_parameter"}),
+    "cs":     frozenset({"parameter"}),
+}
+
