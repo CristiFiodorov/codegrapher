@@ -461,6 +461,13 @@ class DFGDriver(BaseDriver):
         return s
 
     def _tree_to_variable_index(self, node):
+        call_types = maps.CALL_EXPRESSION_TYPES.get(self._lang_name, frozenset())
+        if node.type in call_types:
+            args = node.child_by_field_name("arguments")
+            if args is not None:
+                return self._tree_to_variable_index(args)
+            return []
+
         if (len(node.children) == 0 or node.type == "string") and node.type != "comment":
             index = (node.start_point, node.end_point)
             if index in self._index_to_code:
@@ -468,6 +475,7 @@ class DFGDriver(BaseDriver):
                 if node.type != code:
                     return [index]
             return []
+        
         result = []
         for child in node.children:
             result += self._tree_to_variable_index(child)
