@@ -486,6 +486,45 @@ start:
 """,
 }
 
+STATEMENTS["function"] = {
+    "c": b"""int add(int a, int b) {
+    return a + b;
+}
+""",
+    "cpp": b"""int add(int a, int b) {
+    return a + b;
+}
+""",
+    "python": b"""def add(a, b):
+    return a + b
+""",
+    "java": b"""class Main {
+    int add(int a, int b) {
+        return a + b;
+    }
+}
+""",
+    "cs": b"""class Main {
+    int add(int a, int b) {
+        return a + b;
+    }
+}
+""",
+}
+
+STATEMENTS["call"] = {
+    "c": b"""int x = add(a, b);
+""",
+    "cpp": b"""int x = add(a, b);
+""",
+    "python": b"""x = add(a, b)
+""",
+    "java": b"""int x = add(a, b);
+""",
+    "cs": b"""int x = add(a, b);
+""",
+}
+
 langs = get_language_map()
 
 

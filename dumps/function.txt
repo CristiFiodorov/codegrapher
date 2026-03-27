@@ -1,0 +1,170 @@
+=== C ===
+--- source ---
+int add(int a, int b) {
+    return a + b;
+}
+--- tree ---
+translation_unit
+  function_definition
+    type: primitive_type 'int'
+    declarator: function_declarator
+      declarator: identifier 'add'
+      parameters: parameter_list
+        ( '('
+        parameter_declaration
+          type: primitive_type 'int'
+          declarator: identifier 'a'
+        , ','
+        parameter_declaration
+          type: primitive_type 'int'
+          declarator: identifier 'b'
+        ) ')'
+    body: compound_statement
+      { '{'
+      return_statement
+        return 'return'
+        binary_expression
+          left: identifier 'a'
+          operator: + '+'
+          right: identifier 'b'
+        ; ';'
+      } '}'
+
+=== CPP ===
+--- source ---
+int add(int a, int b) {
+    return a + b;
+}
+--- tree ---
+translation_unit
+  function_definition
+    type: primitive_type 'int'
+    declarator: function_declarator
+      declarator: identifier 'add'
+      parameters: parameter_list
+        ( '('
+        parameter_declaration
+          type: primitive_type 'int'
+          declarator: identifier 'a'
+        , ','
+        parameter_declaration
+          type: primitive_type 'int'
+          declarator: identifier 'b'
+        ) ')'
+    body: compound_statement
+      { '{'
+      return_statement
+        return 'return'
+        binary_expression
+          left: identifier 'a'
+          operator: + '+'
+          right: identifier 'b'
+        ; ';'
+      } '}'
+
+=== PYTHON ===
+--- source ---
+def add(a, b):
+    return a + b
+--- tree ---
+module
+  function_definition
+    def 'def'
+    name: identifier 'add'
+    parameters: parameters
+      ( '('
+      identifier 'a'
+      , ','
+      identifier 'b'
+      ) ')'
+    : ':'
+    body: block
+      return_statement
+        return 'return'
+        binary_operator
+          left: identifier 'a'
+          operator: + '+'
+          right: identifier 'b'
+
+=== JAVA ===
+--- source ---
+class Main {
+    int add(int a, int b) {
+        return a + b;
+    }
+}
+--- tree ---
+program
+  class_declaration
+    class 'class'
+    name: identifier 'Main'
+    body: class_body
+      { '{'
+      method_declaration
+        type: integral_type
+          int 'int'
+        name: identifier 'add'
+        parameters: formal_parameters
+          ( '('
+          formal_parameter
+            type: integral_type
+              int 'int'
+            name: identifier 'a'
+          , ','
+          formal_parameter
+            type: integral_type
+              int 'int'
+            name: identifier 'b'
+          ) ')'
+        body: block
+          { '{'
+          return_statement
+            return 'return'
+            binary_expression
+              left: identifier 'a'
+              operator: + '+'
+              right: identifier 'b'
+            ; ';'
+          } '}'
+      } '}'
+
+=== CS ===
+--- source ---
+class Main {
+    int add(int a, int b) {
+        return a + b;
+    }
+}
+--- tree ---
+compilation_unit
+  class_declaration
+    class 'class'
+    name: identifier 'Main'
+    body: declaration_list
+      { '{'
+      method_declaration
+        type: predefined_type 'int'
+        name: identifier
+          add 'add'
+        parameters: parameter_list
+          ( '('
+          parameter
+            type: predefined_type 'int'
+            name: identifier 'a'
+          , ','
+          parameter
+            type: predefined_type 'int'
+            name: identifier 'b'
+          ) ')'
+        body: block
+          { '{'
+          return_statement
+            return 'return'
+            binary_expression
+              left: identifier 'a'
+              operator: + '+'
+              right: identifier 'b'
+            ; ';'
+          } '}'
+      } '}'
+

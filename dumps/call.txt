@@ -1,0 +1,105 @@
+=== C ===
+--- source ---
+int x = add(a, b);
+--- tree ---
+translation_unit
+  declaration
+    type: primitive_type 'int'
+    declarator: init_declarator
+      declarator: identifier 'x'
+      = '='
+      value: call_expression
+        function: identifier 'add'
+        arguments: argument_list
+          ( '('
+          identifier 'a'
+          , ','
+          identifier 'b'
+          ) ')'
+    ; ';'
+
+=== CPP ===
+--- source ---
+int x = add(a, b);
+--- tree ---
+translation_unit
+  declaration
+    type: primitive_type 'int'
+    declarator: init_declarator
+      declarator: identifier 'x'
+      = '='
+      value: call_expression
+        function: identifier 'add'
+        arguments: argument_list
+          ( '('
+          identifier 'a'
+          , ','
+          identifier 'b'
+          ) ')'
+    ; ';'
+
+=== PYTHON ===
+--- source ---
+x = add(a, b)
+--- tree ---
+module
+  expression_statement
+    assignment
+      left: identifier 'x'
+      = '='
+      right: call
+        function: identifier 'add'
+        arguments: argument_list
+          ( '('
+          identifier 'a'
+          , ','
+          identifier 'b'
+          ) ')'
+
+=== JAVA ===
+--- source ---
+int x = add(a, b);
+--- tree ---
+program
+  local_variable_declaration
+    type: integral_type
+      int 'int'
+    declarator: variable_declarator
+      name: identifier 'x'
+      = '='
+      value: method_invocation
+        name: identifier 'add'
+        arguments: argument_list
+          ( '('
+          identifier 'a'
+          , ','
+          identifier 'b'
+          ) ')'
+    ; ';'
+
+=== CS ===
+--- source ---
+int x = add(a, b);
+--- tree ---
+compilation_unit
+  global_statement
+    local_declaration_statement
+      variable_declaration
+        type: predefined_type 'int'
+        variable_declarator
+          identifier 'x'
+          equals_value_clause
+            = '='
+            invocation_expression
+              function: identifier
+                add 'add'
+              arguments: argument_list
+                ( '('
+                argument
+                  identifier 'a'
+                , ','
+                argument
+                  identifier 'b'
+                ) ')'
+      ; ';'
+
