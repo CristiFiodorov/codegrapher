@@ -3,16 +3,20 @@ import sys
 
 from utils.language import get_language_map
 from utils.postprocessor import write_networkx_to_json, write_to_dot
-from tree_parser import ASTDriver, DFGDriver
+from tree_parser import ASTDriver, DFGDriver, CombinedDriver
 
 
-DRIVER_MAP = {"ast": ASTDriver, "dfg": DFGDriver}
+_SINGLE_DRIVERS = {"ast": ASTDriver, "dfg": DFGDriver}
+
+_VALID_COMPONENTS = set(_SINGLE_DRIVERS.keys())
+
+_MODE_CHOICES = ["ast", "dfg", "ast+dfg"]
 
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="codegrapher",
-        description="Parse source code into AST or DFG graphs"
+        description="Parse source code into AST, DFG or combined graphs"
     )
     p.add_argument(
         "source_file"
@@ -26,7 +30,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument(
         "--mode",
         required=True,
-        choices=DRIVER_MAP.keys(),
+        metavar="{" + ",".join(_MODE_CHOICES) + "}",
         help="Graph type to generate"
     )
     p.add_argument(
@@ -51,6 +55,16 @@ def build_parser() -> argparse.ArgumentParser:
     return p
 
 
+def _parse_mode(mode_str: str, parser: argparse.ArgumentParser):
+    components = [c.strip() for c in mode_str.split("+")]
+    unknown = set(components) - _VALID_COMPONENTS
+    if unknown:
+        parser.error(f"Unknown mode component(s): {unknown}. Valid components: {sorted(_VALID_COMPONENTS)}")
+    if len(components) == 1:
+        return components[0], None
+    return "combined", components
+
+
 def main():
     parser = build_parser()
     args = parser.parse_args()
@@ -61,8 +75,13 @@ def main():
     lang_map = get_language_map()
     language = lang_map[args.lang]
 
-    DriverClass = DRIVER_MAP[args.mode]
-    driver = DriverClass(language, args.lang)
+    mode, components = _parse_mode(args.mode, parser)
+
+    if components is not None:
+        driver = CombinedDriver(language, args.lang, components=components)
+    else:
+        driver = _SINGLE_DRIVERS[mode](language, args.lang)
+
     graph = driver.parse(source, preprocess=args.preprocess)
 
     if args.output == "dot":
