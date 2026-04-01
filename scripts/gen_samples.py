@@ -31,21 +31,24 @@ def generate(sample_dir):
             continue
 
         for mode in MODES:
-            out_name = f"{prefix}_{mode}.dot"
-            out_path = os.path.join(base, out_name)
+            for norm in (False, True):
+                suffix = f"_norm" if norm else ""
+                out_name = f"{prefix}_{mode}{suffix}.dot"
+                out_path = os.path.join(base, out_name)
 
-            cmd = [
-                sys.executable, MAIN, src_path,
-                "--lang", lang,
-                "--mode", mode,
-                "--output", "dot",
-                "--out-file", out_path,
-                "--png",
-                "--preprocess"
-            ]
+                cmd = [
+                    sys.executable, MAIN, src_path,
+                    "--lang", lang,
+                    "--mode", mode,
+                    "--output", "dot",
+                    "--out-file", out_path,
+                    "--png",
+                ]
+                if norm:
+                    cmd.append("--normalize")
 
-            print(f"  {out_name}")
-            subprocess.run(cmd, check=True)
+                print(f"  {out_name}")
+                subprocess.run(cmd, check=True)
 
     print()
 
