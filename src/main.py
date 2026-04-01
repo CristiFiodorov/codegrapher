@@ -48,6 +48,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="Strip comments and empty lines before parsing"
     )
     p.add_argument(
+        "--normalize",
+        action="store_true",
+        default=False,
+        help="Normalize node types and labels",
+    )
+    p.add_argument(
         "--png",
         action="store_true",
         help="Render a PNG"
@@ -78,9 +84,9 @@ def main():
     mode, components = _parse_mode(args.mode, parser)
 
     if components is not None:
-        driver = CombinedDriver(language, args.lang, components=components)
+        driver = CombinedDriver(language, args.lang, components=components, normalize=args.normalize)
     else:
-        driver = _SINGLE_DRIVERS[mode](language, args.lang)
+        driver = _SINGLE_DRIVERS[mode](language, args.lang, normalize=args.normalize)
 
     graph = driver.parse(source, preprocess=args.preprocess)
 

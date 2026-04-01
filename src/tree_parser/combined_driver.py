@@ -17,8 +17,8 @@ _CROSS_EDGE_TYPES = {
 
 
 class CombinedDriver(BaseDriver):
-    def __init__(self, language, lang_name: str, components: list[str]):
-        super().__init__(language, lang_name)
+    def __init__(self, language, lang_name: str, components: list[str], normalize: bool = False):
+        super().__init__(language, lang_name, normalize=normalize)
 
         unknown = set(components) - _DRIVER_CLASSES.keys()
 
@@ -28,7 +28,7 @@ class CombinedDriver(BaseDriver):
         self._components = [c for c in _COMPONENT_ORDER if c in set(components)]
         
         self._sub_drivers = {
-            name: _DRIVER_CLASSES[name](language, lang_name)
+            name: _DRIVER_CLASSES[name](language, lang_name, normalize=normalize)
             for name in self._components
         }
 

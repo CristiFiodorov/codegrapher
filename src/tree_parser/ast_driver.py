@@ -2,8 +2,9 @@ from .base_driver import BaseDriver
 
 
 class ASTDriver(BaseDriver):
-    def __init__(self, language, lang_name: str):
-        super().__init__(language, lang_name)
+    def __init__(self, language, lang_name: str, normalize: bool = False) -> None:
+        super().__init__(language, lang_name, normalize=normalize)
+        self._normalize_labels = normalize
 
     def _build_graph(self, tree_root):
         self._visit(tree_root, parent_id=None)
@@ -14,8 +15,9 @@ class ASTDriver(BaseDriver):
 
         nid = self._next_id()
         named_children = [c for c in ts_node.children if c.is_named]
+        is_leaf = len(named_children) == 0
 
-        if len(named_children) == 0:
+        if is_leaf:
             raw = ts_node.text.decode("utf-8", errors="replace")
             label = self._sanitize_label(raw)
         else:
@@ -26,7 +28,8 @@ class ASTDriver(BaseDriver):
             type=ts_node.type,
             label=label,
             start="{0}_{1}".format(*ts_node.start_point),
-            end="{0}_{1}".format(*ts_node.end_point)
+            end="{0}_{1}".format(*ts_node.end_point),
+            is_leaf=is_leaf
         )
 
         if parent_id is not None:

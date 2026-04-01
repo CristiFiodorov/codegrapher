@@ -3,16 +3,19 @@ import networkx as nx
 from tree_sitter import Language, Parser
 
 from utils.preprocessor import remove_comments, remove_empty_lines
+from tree_parser.normalize_map import normalize_type
 
 
 class BaseDriver(ABC):
-    def __init__(self, language: Language, lang_name: str):
+    def __init__(self, language: Language, lang_name: str, normalize: bool = False):
         self._language = language
         self._lang_name = lang_name
         self._parser = Parser()
         self._parser.set_language(language)
-        self._graph: nx.DiGraph = nx.DiGraph()
+        self._graph = nx.DiGraph()
         self._counter = 0
+        self._normalize = normalize
+        self._normalize_labels = False
 
     def _next_id(self):
         nid = self._counter
@@ -37,7 +40,18 @@ class BaseDriver(ABC):
         tree = self._parser.parse(bytes(source, "utf-8"))
         self._build_graph(tree.root_node)
 
+        if self._normalize:
+            self._normalize_types()
+
         return self._graph
+    
+    def _normalize_types(self):
+        for _, data in self._graph.nodes(data=True):
+            canonical = normalize_type(self._lang_name, data.get("type", ""))
+            data["type"] = canonical
+
+            if self._normalize_labels and not data.get("is_leaf", False):
+                data["label"] = canonical
 
     @abstractmethod
     def _build_graph(self, tree_root):
