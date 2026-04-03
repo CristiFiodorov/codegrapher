@@ -193,6 +193,95 @@ _LANG_OVERRIDES: dict[str, dict[str, str]] = {
 }
 
 
+_COMMENT_TYPES = frozenset({"comment", "line_comment", "block_comment"})
+
+AST_SKIP_TYPES: dict[str, frozenset] = {
+    "c":      frozenset({
+                  "primitive_type", "type_identifier", "sized_type_specifier",
+              }) | _COMMENT_TYPES,
+    "cpp":    frozenset({
+                  "primitive_type", "type_identifier", "sized_type_specifier",
+                  "template_type", "qualified_identifier",
+                  "access_specifier",
+                  "storage_class_specifier", "type_qualifier",
+              }) | _COMMENT_TYPES,
+    "python": frozenset({"string_start", "string_end", "pass_statement"}) | _COMMENT_TYPES,
+    "java":   frozenset({
+                  "integral_type", "floating_point_type", "boolean_type",
+                  "void_type", "type_identifier", "generic_type", "array_type",
+                  "scoped_type_identifier", "catch_type",
+                  "modifiers",
+              }) | _COMMENT_TYPES,
+    "cs":     frozenset({
+                  "predefined_type", "void_keyword", "nullable_type",
+                  "array_type", "identifier_name",
+                  "scoped_type_identifier", "implicit_type",
+                  "assignment_operator",
+                  "modifier",
+              }) | _COMMENT_TYPES,
+}
+
+# This nodes are skiped and its named children are directly attach to the parent node
+AST_TRANSPARENT_TYPES: dict[str, frozenset] = {
+    "c":      frozenset({
+                  "pointer_declarator",
+                  "array_declarator",
+                  "function_declarator",
+                  "parameter_declaration",
+                  "type_descriptor",
+                  "parenthesized_expression",
+                  "init_declarator",
+                  "else_clause",
+                  "expression_statement",
+              }),
+    "cpp":    frozenset({
+                  "pointer_declarator",
+                  "reference_declarator",
+                  "array_declarator",
+                  "function_declarator",
+                  "parameter_declaration",
+                  "type_descriptor",
+                  "condition_clause",
+                  "qualified_identifier",
+                  "parenthesized_expression",
+                  "init_declarator",
+                  "else_clause",
+                  "expression_statement",
+              }),
+    "python": frozenset({
+                  "with_clause",
+                  "with_item",
+                  "expression_list",
+                  "else_clause",
+                  "list_comprehension",
+                  "set_comprehension",
+                  "dict_comprehension",
+                  "generator_expression",
+                  "expression_statement",
+              }),
+    "java":   frozenset({
+                  "parenthesized_expression",
+                  "variable_declarator",
+                  "resource_specification",
+                  "resource",
+                  "catch_formal_parameter",
+                  "expression_statement",
+                  "equals_value_clause",
+                  "formal_parameter",
+                  "argument",
+              }),
+    "cs":     frozenset({
+                  "parenthesized_expression",
+                  "variable_declarator",
+                  "local_declaration_statement",
+                  "member_binding_expression",
+                  "expression_statement",
+                  "equals_value_clause",
+                  "parameter",
+                  "argument",
+              }),
+}
+
 def normalize_type(lang: str, ts_type: str) -> str:
     overrides = _LANG_OVERRIDES.get(lang, {})
     if ts_type in overrides:

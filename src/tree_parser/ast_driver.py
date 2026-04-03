@@ -1,4 +1,5 @@
 from .base_driver import BaseDriver
+from .normalize_map import AST_SKIP_TYPES, AST_TRANSPARENT_TYPES
 
 
 class ASTDriver(BaseDriver):
@@ -12,6 +13,16 @@ class ASTDriver(BaseDriver):
     def _visit(self, ts_node, parent_id):
         if not ts_node.is_named:
             return
+        
+        if self._normalize:
+            if ts_node.type in AST_SKIP_TYPES.get(self._lang_name, frozenset()):
+                return
+            
+            transparent = AST_TRANSPARENT_TYPES.get(self._lang_name, frozenset())
+            if ts_node.type in transparent:
+                for child in ts_node.children:
+                    self._visit(child, parent_id=parent_id)
+                return
 
         nid = self._next_id()
         named_children = [c for c in ts_node.children if c.is_named]
