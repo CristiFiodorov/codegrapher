@@ -1,81 +1,60 @@
-import networkx as nx
-
 from .base_driver import BaseDriver
 from .ast_driver import ASTDriver
 from .dfg_driver import DFGDriver
 
-_DRIVER_CLASSES = {
-    "ast": ASTDriver,
-    "dfg": DFGDriver,
-}
-
-_COMPONENT_ORDER = ["ast", "dfg"]
-
-_CROSS_EDGE_TYPES = {
-    ("dfg", "ast"): "dfg_to_ast",
-}
-
 
 class CombinedDriver(BaseDriver):
-    def __init__(self, language, lang_name: str, components: list[str], normalize: bool = False):
-        super().__init__(language, lang_name, normalize=normalize)
+    """
+    Builds an AST graph, then overlays DFG edges directly onto AST leaf nodes.
+    No duplicate nodes — DFG edges connect existing AST nodes.
+    """
 
-        unknown = set(components) - _DRIVER_CLASSES.keys()
-
-        if unknown:
-            raise ValueError(f"Unknown graph components: {unknown}")
-        
-        self._components = [c for c in _COMPONENT_ORDER if c in set(components)]
-        
-        self._sub_drivers = {
-            name: _DRIVER_CLASSES[name](language, lang_name, normalize=normalize)
-            for name in self._components
-        }
+    def __init__(self, language, lang_name: str, components: list[str] = None, normalize: bool = False, skip_comments: bool = False):
+        super().__init__(language, lang_name, normalize=normalize, skip_comments=skip_comments)
+        self._ast_driver = ASTDriver(language, lang_name, normalize=normalize, skip_comments=skip_comments)
+        self._dfg_driver = DFGDriver(language, lang_name, normalize=False)
 
     def parse(self, source: str, preprocess: bool = True):
-        self._graph = nx.DiGraph()
-        self._counter = 0
+        # 1. Build the AST graph (this is our base graph)
+        ast_graph = self._ast_driver.parse(source, preprocess)
 
-        graphs = {
-            name: driver.parse(source, preprocess)
-            for name, driver in self._sub_drivers.items()
-        }
-        self._merge(graphs)
+        # 2. Build position -> AST node ID index from leaf nodes
+        pos_to_ast_nid = {}
+        for nid, data in ast_graph.nodes(data=True):
+            if data.get("is_leaf", False):
+                start = data.get("start")
+                end = data.get("end")
+                if start is not None and end is not None:
+                    pos_to_ast_nid[(start, end)] = nid
+
+        # 3. Run DFG extraction on the same (preprocessed) source
+        dfg_graph = self._dfg_driver.parse(source, preprocess)
+
+        # 4. Build DFG node ID -> position index
+        dfg_id_to_pos = {}
+        for nid, data in dfg_graph.nodes(data=True):
+            start = data.get("start")
+            end = data.get("end")
+            if start is not None and end is not None:
+                dfg_id_to_pos[nid] = (start, end)
+
+        # 5. Add DFG edges between AST nodes
+        for u, v, edata in dfg_graph.edges(data=True):
+            u_pos = dfg_id_to_pos.get(u)
+            v_pos = dfg_id_to_pos.get(v)
+            if u_pos is None or v_pos is None:
+                continue
+            ast_u = pos_to_ast_nid.get(u_pos)
+            ast_v = pos_to_ast_nid.get(v_pos)
+            if ast_u is not None and ast_v is not None:
+                ast_graph.add_edge(ast_u, ast_v, **edata)
+
+        # 6. Normalize after everything is assembled
+        self._graph = ast_graph
+        if self._normalize:
+            self._normalize_types()
+
         return self._graph
 
     def _build_graph(self, tree_root):
         pass
-
-    def _merge(self, graphs: dict[str, nx.DiGraph]):
-        for name, g in graphs.items():
-            for nid, data in g.nodes(data=True):
-                self._graph.add_node(f"{name}_{nid}", **data, graph_type=name)
-            for u, v, data in g.edges(data=True):
-                self._graph.add_edge(f"{name}_{u}", f"{name}_{v}", **data)
-        self._add_cross_edges(graphs)
-
-    def _add_cross_edges(self, graphs: dict[str, nx.DiGraph]):
-        """Add directed cross-edges between sub-graphs by matching (start, end) position."""
-
-        # Build position index per graph: (start, end) -> prefixed node id
-        pos_index = {}
-        for name, g in graphs.items():
-            idx = {}
-            for nid, data in g.nodes(data=True):
-                start = data.get("start")
-                end = data.get("end")
-                if start is not None and end is not None:
-                    idx[(start, end)] = f"{name}_{nid}"
-            pos_index[name] = idx
-
-        for (src, tgt), edge_type in _CROSS_EDGE_TYPES.items():
-            if src not in graphs or tgt not in graphs:
-                continue
-            for nid, data in graphs[src].nodes(data=True):
-                start = data.get("start")
-                end = data.get("end")
-                if start is None or end is None:
-                    continue
-                tgt_nid = pos_index[tgt].get((start, end))
-                if tgt_nid is not None:
-                    self._graph.add_edge(f"{src}_{nid}", tgt_nid, edge_type=edge_type, label="ref")

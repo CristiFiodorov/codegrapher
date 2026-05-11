@@ -54,6 +54,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="Normalize node types and labels",
     )
     p.add_argument(
+        "--skip-comments",
+        action="store_true",
+        default=False,
+        help="Drop comment nodes from the AST without normalizing other types",
+    )
+    p.add_argument(
         "--png",
         action="store_true",
         help="Render a PNG"
@@ -84,9 +90,9 @@ def main():
     mode, components = _parse_mode(args.mode, parser)
 
     if components is not None:
-        driver = CombinedDriver(language, args.lang, components=components, normalize=args.normalize)
+        driver = CombinedDriver(language, args.lang, components=components, normalize=args.normalize, skip_comments=args.skip_comments)
     else:
-        driver = _SINGLE_DRIVERS[mode](language, args.lang, normalize=args.normalize)
+        driver = _SINGLE_DRIVERS[mode](language, args.lang, normalize=args.normalize, skip_comments=args.skip_comments)
 
     graph = driver.parse(source, preprocess=args.preprocess)
 

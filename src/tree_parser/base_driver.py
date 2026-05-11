@@ -7,15 +7,15 @@ from tree_parser.normalize_map import normalize_type
 
 
 class BaseDriver(ABC):
-    def __init__(self, language: Language, lang_name: str, normalize: bool = False):
+    def __init__(self, language: Language, lang_name: str, normalize: bool = False, skip_comments: bool = False):
         self._language = language
         self._lang_name = lang_name
-        self._parser = Parser()
-        self._parser.set_language(language)
+        self._parser = Parser(language)
         self._graph = nx.DiGraph()
         self._counter = 0
         self._normalize = normalize
         self._normalize_labels = False
+        self._skip_comments = skip_comments
 
     def _next_id(self):
         nid = self._counter

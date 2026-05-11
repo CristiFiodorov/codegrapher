@@ -5,8 +5,8 @@ from . import lang_maps as maps
 
 
 class DFGDriver(BaseDriver):
-    def __init__(self, language, lang_name: str, normalize: bool = False):
-        super().__init__(language, lang_name, normalize=normalize)
+    def __init__(self, language, lang_name: str, normalize: bool = False, skip_comments: bool = False):
+        super().__init__(language, lang_name, normalize=normalize, skip_comments=skip_comments)
         self._index_to_code: dict = {}
 
     def _build_graph(self, tree_root):
