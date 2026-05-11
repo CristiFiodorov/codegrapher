@@ -6,3 +6,5 @@ samples/*.png
 samples/*.dot
 samples_harder/*.png
 samples_harder/*.dot
+
+src/codegrapher.egg-info
