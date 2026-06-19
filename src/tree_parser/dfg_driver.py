@@ -19,6 +19,8 @@ class DFGDriver(BaseDriver):
             code = self._index_to_code_token(start, end)
             self._index_to_code[(start, end)] = (idx, code)
 
+        self._apply_member_codes(tree_root)
+
         dfg_entries, _ = self._extract_dfg(tree_root, {})
 
         node_set = set()
@@ -97,25 +99,57 @@ class DFGDriver(BaseDriver):
         do_first_types = maps.DO_FIRST_TYPES.get(lang, frozenset())
         return self._handle_default(node, states, do_first_types)
 
+    def _member_field_node(self, node):
+        member_types = ("field_access", "field_expression", "attribute")
+        if node.type not in member_types:
+            return None
+        field = "attribute" if node.type == "attribute" else "field"
+        return node.child_by_field_name(field)
+
+    def _is_member_field(self, node):
+        p = node.parent
+        if p is None:
+            return False
+        f = self._member_field_node(p)
+        return f is not None and f.id == node.id
+
+    def _is_kwarg_name(self, node):
+        p = node.parent
+        if p is not None and p.type == "keyword_argument":
+            nm = p.child_by_field_name("name")
+            return nm is not None and nm.id == node.id
+        return False
+
+    def _is_variable_leaf(self, node):
+        if self._is_kwarg_name(node):
+            return False
+        if self._is_member_field(node):
+            return True
+        return node.type == "identifier"
+
+    def _apply_member_codes(self, node):
+        if self._is_member_field(node):
+            pos = (node.start_point, node.end_point)
+            if pos in self._index_to_code:
+                idx, _ = self._index_to_code[pos]
+                qual = self._index_to_code_token(node.parent.start_point, node.parent.end_point)
+                self._index_to_code[pos] = (idx, qual)
+        for child in node.children:
+            self._apply_member_codes(child)
+
     def _handle_leaf(self, node, states):
         pos = (node.start_point, node.end_point)
         if pos not in self._index_to_code:
             return [], states
         idx, code = self._index_to_code[pos]
 
-        if node.type == code:
-            return [], states
-
-        skip_types = maps.SKIP_NODE_TYPES.get(self._lang_name, frozenset())
-        if node.type in skip_types:
+        if not self._is_variable_leaf(node):
             return [], states
 
         if code in states:
             return [(code, idx, "comesFrom", [code], states[code].copy())], states
 
-        if node.type == "identifier":
-            states[code] = [idx]
-
+        states[code] = [idx]
         return [(code, idx, "comesFrom", [], [])], states
 
     def _handle_def(self, node, states):
@@ -384,14 +418,13 @@ class DFGDriver(BaseDriver):
 
         # Python tuple unpacking a, b = x, y
         if self._lang_name == "python" and node.type in ("assignment", "augmented_assignment"):
-            left_ch = [c for c in left.children if c.type != ","]
-            right_ch = [c for c in right.children if c.type != ","]
-            if len(left_ch) == len(right_ch) and len(left_ch) > 0:
-                return left_ch, right_ch
-            if not left_ch:
-                return [left], [right]
-            if not right_ch:
-                return [left], [right]
+            tuple_types = ("pattern_list", "tuple_pattern", "tuple",
+                           "expression_list", "list_pattern", "list")
+            if left.type in tuple_types and right.type in tuple_types:
+                left_ch = [c for c in left.children if c.type != ","]
+                right_ch = [c for c in right.children if c.type != ","]
+                if len(left_ch) == len(right_ch) and len(left_ch) > 0:
+                    return left_ch, right_ch
 
         return [left], [right]
 
@@ -468,14 +501,17 @@ class DFGDriver(BaseDriver):
                 return self._tree_to_variable_index(args)
             return []
 
+        member_field = self._member_field_node(node)
+        if member_field is not None:
+            index = (member_field.start_point, member_field.end_point)
+            return [index] if index in self._index_to_code else []
+
         if (len(node.children) == 0 or node.type == "string") and node.type != "comment":
             index = (node.start_point, node.end_point)
-            if index in self._index_to_code:
-                _, code = self._index_to_code[index]
-                if node.type != code:
-                    return [index]
+            if index in self._index_to_code and self._is_variable_leaf(node):
+                return [index]
             return []
-        
+
         result = []
         for child in node.children:
             result += self._tree_to_variable_index(child)
