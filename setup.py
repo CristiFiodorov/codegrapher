@@ -4,6 +4,12 @@ setup(
     name="codegrapher",
     version="0.1.0",
     description="Parse source code into AST, DFG or combined graphs",
+    author="Cristian FIODOROV",
+    license="MIT",
+    license_files=["LICENSE"],
+    classifiers=[
+        "License :: OSI Approved :: MIT License",
+    ],
     package_dir={"": "src"},
     packages=find_packages(where="src"),
     python_requires=">=3.8",
