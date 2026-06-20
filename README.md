@@ -36,8 +36,7 @@ codegrapher path/to/source.py \
 ## Python API
 
 ```python
-from utils.language import get_language_map
-from tree_parser import ASTDriver, DFGDriver, CombinedDriver
+from codegrapher import ASTDriver, DFGDriver, CombinedDriver, get_language_map
 
 lang_map = get_language_map()
 language = lang_map["python"]

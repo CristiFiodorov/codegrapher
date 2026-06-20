@@ -1,9 +1,9 @@
 import argparse
 import sys
 
-from utils.language import get_language_map
-from utils.postprocessor import write_networkx_to_json, write_to_dot
-from tree_parser import ASTDriver, DFGDriver, CombinedDriver
+from .utils.language import get_language_map
+from .utils.postprocessor import write_networkx_to_json, write_to_dot
+from .tree_parser import ASTDriver, DFGDriver, CombinedDriver
 
 
 _SINGLE_DRIVERS = {"ast": ASTDriver, "dfg": DFGDriver}

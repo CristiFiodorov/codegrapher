@@ -20,7 +20,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "codegrapher=main:main",
+            "codegrapher=codegrapher.main:main",
         ],
     },
 )

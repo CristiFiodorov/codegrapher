@@ -3,7 +3,6 @@ import subprocess
 import sys
 
 _ROOT = os.path.join(os.path.dirname(__file__), "..")
-MAIN = os.path.join(_ROOT, "src", "main.py")
 
 LANGUAGES = {
     "c":      ("sample.c",   "c"),
@@ -37,7 +36,7 @@ def generate(sample_dir):
                 out_path = os.path.join(base, out_name)
 
                 cmd = [
-                    sys.executable, MAIN, src_path,
+                    sys.executable, "-m", "codegrapher.main", src_path,
                     "--lang", lang,
                     "--mode", mode,
                     "--output", "dot",

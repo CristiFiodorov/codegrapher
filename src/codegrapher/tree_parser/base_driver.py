@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 import networkx as nx
 from tree_sitter import Language, Parser
 
-from utils.preprocessor import remove_comments, remove_empty_lines
-from tree_parser.normalize_map import normalize_type
+from ..utils.preprocessor import remove_comments, remove_empty_lines
+from .normalize_map import normalize_type
 
 
 class BaseDriver(ABC):

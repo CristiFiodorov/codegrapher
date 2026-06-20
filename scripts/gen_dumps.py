@@ -1,9 +1,6 @@
 import os
-import sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
-
-from utils.language import get_language_map
+from codegrapher import get_language_map
 from tree_sitter import Parser
 
 
